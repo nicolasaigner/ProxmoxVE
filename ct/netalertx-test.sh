@@ -6,7 +6,7 @@
 
 # Use seu fork para testes (mude para community-scripts após aprovação do PR)
 GITHUB_USER="nicolasaigner"
-GITHUB_BRANCH="main"
+GITHUB_BRANCH="feature/netalertx"
 
 source <(curl -fsSL https://raw.githubusercontent.com/${GITHUB_USER}/ProxmoxVE/${GITHUB_BRANCH}/misc/build.func)
 # Copyright (c) 2021-2026 community-scripts ORG
