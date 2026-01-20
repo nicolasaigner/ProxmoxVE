@@ -1,0 +1,41 @@
+{
+  "name": "NetAlertX",
+  "slug": "netalertx",
+  "categories": [4],
+  "date_created": "2026-01-19",
+  "type": "ct",
+  "updateable": true,
+  "privileged": false,
+  "interface_port": 20211,
+  "documentation": "https://docs.netalertx.com/",
+  "website": "https://netalertx.com/",
+  "logo": "https://raw.githubusercontent.com/jokob-sk/NetAlertX/main/front/img/NetAlertX_logo.png",
+  "description": "Network intruder and presence detector. Scans for devices connected to your network and alerts you if new and unknown devices are found. Features include device discovery via arp-scan, Pi-hole integration, SNMP router import, and notifications to 80+ services.",
+  "install_methods": [
+    {
+      "type": "default",
+      "script": "ct/netalertx.sh",
+      "resources": {
+        "cpu": 2,
+        "ram": 1024,
+        "hdd": 4,
+        "os": "debian",
+        "version": "12"
+      }
+    }
+  ],
+  "default_credentials": {
+    "username": null,
+    "password": null
+  },
+  "notes": [
+    {
+      "text": "NetAlertX will be available on port 20211 after installation.",
+      "type": "info"
+    },
+    {
+      "text": "For best results, the container should have network access to scan your LAN. Consider using host network mode for full ARP scanning capabilities.",
+      "type": "warning"
+    }
+  ]
+}
