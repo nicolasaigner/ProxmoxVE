@@ -75,3 +75,7 @@ json/.vscode/
 .git/
 .gitignore
 .vscode/settings.json
+.github/instructions/mcp-hub-proxmox-ve.instructions.md
+.vscode/ProxmoxVE.code-workspace
+.gitignore
+.git-setup-info

@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/build.func)
+source <(curl -fsSL https://raw.githubusercontent.com/nicolasaigner/ProxmoxVE/main/misc/build.func)
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: michelroegl-brunner
-# License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://github.com/community-scripts/ProxmoxVE-Local
+# License: MIT | https://github.com/nicolasaigner/ProxmoxVE/raw/main/LICENSE
+# Source: https://github.com/nicolasaigner/ProxmoxVE-Local
 
 APP="PVE-Scripts-Local"
 var_tags="${var_tags:-pve-scripts-local}"

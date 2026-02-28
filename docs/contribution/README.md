@@ -23,7 +23,7 @@ When developing and testing **in your fork**:
 
 ```bash
 # 1. Fork on GitHub
-# Visit: https://github.com/community-scripts/ProxmoxVE → Fork (top right)
+# Visit: https://github.com/nicolasaigner/ProxmoxVE → Fork (top right)
 
 # 2. Clone your fork
 git clone https://github.com/YOUR_USERNAME/ProxmoxVE.git
@@ -75,7 +75,7 @@ Once your script is merged to the main repository, users download and run it fro
 
 ```bash
 # ✅ Users run from GitHub (normal usage after PR merged)
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/myapp.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/nicolasaigner/ProxmoxVE/main/ct/myapp.sh)"
 
 # Install scripts are called by the CT script and are not run directly by users
 ```
@@ -97,7 +97,7 @@ bash -c "$(curl -fsSL https://raw.githubusercontent.com/YOUR_USERNAME/ProxmoxVE/
 
 ```bash
 # Users download the script from upstream via curl
-bash -c "$(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/ct/myapp.sh)"
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/nicolasaigner/ProxmoxVE/main/ct/myapp.sh)"
 
 # The script's curl commands now point back to upstream (community-scripts)
 # This is the stable, tested version
@@ -159,7 +159,7 @@ git config user.name "Your Name"
 git config user.email "your.email@example.com"
 
 # Add upstream remote for syncing with main repo
-git remote add upstream https://github.com/community-scripts/ProxmoxVE.git
+git remote add upstream https://github.com/nicolasaigner/ProxmoxVE.git
 
 # Verify remotes
 git remote -v
@@ -644,9 +644,9 @@ See "Using AI Assistants" section above for:
 
 ## 📞 Contact & Support
 
-- **GitHub**: [community-scripts/ProxmoxVE](https://github.com/community-scripts/ProxmoxVE)
-- **Issues**: [GitHub Issues](https://github.com/community-scripts/ProxmoxVE/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/community-scripts/ProxmoxVE/discussions)
+- **GitHub**: [community-scripts/ProxmoxVE](https://github.com/nicolasaigner/ProxmoxVE)
+- **Issues**: [GitHub Issues](https://github.com/nicolasaigner/ProxmoxVE/issues)
+- **Discussions**: [GitHub Discussions](https://github.com/nicolasaigner/ProxmoxVE/discussions)
 - **Discord**: [Join Server](https://discord.gg/UHrpNWGwkH)
 
 ---

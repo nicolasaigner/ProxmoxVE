@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
-source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/build.func)
+source <(curl -fsSL https://raw.githubusercontent.com/nicolasaigner/ProxmoxVE/main/misc/build.func)
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: TheRealVira
-# License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
+# License: MIT | https://github.com/nicolasaigner/ProxmoxVE/raw/main/LICENSE
 # Source: https://pf2etools.com/ | Github: https://github.com/Pf2eToolsOrg/Pf2eTools
 
 APP="Pf2eTools"
