@@ -39,7 +39,8 @@ EOF
 msg_ok "Configured MCP Hub"
 
 msg_info "Creating Service"
-cat <<EOF >/etc/systemd/system/mcp-hub.service
+mkdir -p /root/.mcp-hub
+cat <<EOF >/etc/systemd/system/mcphub.service
 [Unit]
 Description=MCP Hub Service
 After=network.target
@@ -57,7 +58,7 @@ Environment="HOME=/root"
 [Install]
 WantedBy=multi-user.target
 EOF
-systemctl enable -q --now mcp-hub
+systemctl enable -q --now mcphub
 msg_ok "Created Service"
 
 motd_ssh
