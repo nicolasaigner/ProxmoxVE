@@ -29,16 +29,16 @@ function update_script() {
     exit
   fi
 
-  if check_for_gh_release "mcp-hub" "nicolasaigner/mcp-hub"; then
+  if check_for_gh_release "mcp-hub" "ravitemer/mcp-hub"; then
     msg_info "Stopping Service"
-    systemctl stop mcp-hub
+    systemctl stop mcphub
     msg_ok "Stopped Service"
 
     msg_info "Backing up Configuration"
-    cp /opt/mcp-hub/global.json /tmp/mcp-hub_global.json.bak 2>/dev/null || true
+    cp /opt/mcp-hub/global.json /tmp/mcphub_global.json.bak 2>/dev/null || true
     msg_ok "Backed up Configuration"
 
-    CLEAN_INSTALL=1 fetch_and_deploy_gh_release "mcp-hub" "nicolasaigner/mcp-hub" "tarball" "latest" "/opt/mcp-hub"
+    CLEAN_INSTALL=1 fetch_and_deploy_gh_release "mcp-hub" "ravitemer/mcp-hub" "tarball" "latest" "/opt/mcp-hub"
 
     msg_info "Building MCP Hub"
     cd /opt/mcp-hub || exit
@@ -48,12 +48,12 @@ function update_script() {
     msg_ok "Built MCP Hub"
 
     msg_info "Restoring Configuration"
-    cp /tmp/mcp-hub_global.json.bak /opt/mcp-hub/global.json 2>/dev/null || true
-    rm -f /tmp/mcp-hub_global.json.bak
+    cp /tmp/mcphub_global.json.bak /opt/mcp-hub/global.json 2>/dev/null || true
+    rm -f /tmp/mcphub_global.json.bak
     msg_ok "Restored Configuration"
 
     msg_info "Starting Service"
-    systemctl start mcp-hub
+    systemctl start mcphub
     msg_ok "Started Service"
     msg_ok "Updated successfully!"
   fi

@@ -2,7 +2,7 @@
 
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: nicolasaigner
-# License: MIT | https://github.com/nicolasaigner/ProxmoxVE/raw/main/LICENSE
+# License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
 # Source: https://github.com/nicolasaigner/mcp-hub
 
 source /dev/stdin <<<"$FUNCTIONS_FILE_PATH"
@@ -21,7 +21,7 @@ msg_ok "Installed Dependencies"
 
 NODE_VERSION="22" setup_nodejs
 
-fetch_and_deploy_gh_release "mcp-hub" "nicolasaigner/mcp-hub" "tarball" "latest" "/opt/mcp-hub"
+fetch_and_deploy_gh_release "mcp-hub" "ravitemer/mcp-hub" "tarball" "latest" "/opt/mcp-hub"
 
 msg_info "Building MCP Hub"
 cd /opt/mcp-hub || exit
