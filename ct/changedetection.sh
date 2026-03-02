@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 tteck
 # Author: tteck (tteckster)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://changedetection.io/
+# Source: https://changedetection.io/ | Github: https://github.com/dgtlmoon/changedetection.io
 
 APP="Change Detection"
 var_tags="${var_tags:-monitoring;crawler}"
@@ -29,12 +29,7 @@ function update_script() {
     exit
   fi
 
-  if ! dpkg -s libjpeg-dev >/dev/null 2>&1; then
-    msg_info "Installing Dependencies"
-    $STD apt-get update
-    $STD apt-get install -y libjpeg-dev
-    msg_ok "Updated Dependencies"
-  fi
+  ensure_dependencies libjpeg-dev
 
   NODE_VERSION="24" setup_nodejs
 

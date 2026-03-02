@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 tteck
 # Author: tteck (tteckster)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://uptime.kuma.pet/
+# Source: https://uptime.kuma.pet/ | Github: https://github.com/louislam/uptime-kuma
 
 APP="Uptime Kuma"
 var_tags="${var_tags:-analytics;monitoring}"
@@ -29,6 +29,11 @@ function update_script() {
   fi
 
   NODE_VERSION="22" setup_nodejs
+
+  ensure_dependencies chromium
+  if [[ ! -L /opt/uptime-kuma/chromium ]]; then
+    ln -s /usr/bin/chromium /opt/uptime-kuma/chromium
+  fi
 
   if check_for_gh_release "uptime-kuma" "louislam/uptime-kuma"; then
     msg_info "Stopping Service"

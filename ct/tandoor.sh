@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: MickLesk (Canbiz)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://tandoor.dev/
+# Source: https://tandoor.dev/ | Github: https://github.com/TandoorRecipes/recipes
 
 APP="Tandoor"
 var_tags="${var_tags:-recipes}"
@@ -50,7 +50,7 @@ function update_script() {
     cp -r /opt/tandoor.bak/{config,api,mediafiles,staticfiles} /opt/tandoor/
     mv /opt/tandoor.bak/.env /opt/tandoor/.env
     cd /opt/tandoor
-    $STD uv venv .venv --python=python3
+    $STD uv venv --clear .venv --python=python3
     $STD uv pip install -r requirements.txt --python .venv/bin/python
     cd /opt/tandoor/vue3
     $STD yarn install

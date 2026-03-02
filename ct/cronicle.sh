@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 tteck
 # Author: tteck (tteckster)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://cronicle.net/
+# Source: https://cronicle.net/ | Github: https://github.com/jhuckaby/Cronicle
 
 APP="Cronicle"
 var_tags="${var_tags:-task-scheduler}"
@@ -11,7 +11,7 @@ var_cpu="${var_cpu:-1}"
 var_ram="${var_ram:-512}"
 var_disk="${var_disk:-2}"
 var_os="${var_os:-debian}"
-var_version="${var_version:-12}"
+var_version="${var_version:-13}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -23,10 +23,9 @@ function update_script() {
   header_info
   check_container_storage
   check_container_resources
-  UPD=$(whiptail --backtitle "Proxmox VE Helper Scripts" --title "SUPPORT" --radiolist --cancel-button Exit-Script "Spacebar = Select" 11 58 2 \
-    "1" "Update ${APP}" ON \
-    "2" "Install ${APP} Worker" OFF \
-    3>&1 1>&2 2>&3)
+  UPD=$(msg_menu "Cronicle Update Options" \
+    "1" "Update ${APP}" \
+    "2" "Install ${APP} Worker")
 
   if [ "$UPD" == "1" ]; then
     if [[ ! -d /opt/cronicle ]]; then
@@ -35,20 +34,16 @@ function update_script() {
     fi
     NODE_VERSION="22" setup_nodejs
 
-    msg_info "Updating ${APP}"
+    msg_info "Updating Cronicle"
     $STD /opt/cronicle/bin/control.sh upgrade
-    msg_ok "Updated ${APP}"
+    msg_ok "Updated Cronicle"
     exit
   fi
   if [ "$UPD" == "2" ]; then
     NODE_VERSION="22" setup_nodejs
     if check_for_gh_release "cronicle" "jhuckaby/Cronicle"; then
       msg_info "Installing Dependencies"
-      $STD apt-get install -y \
-        git \
-        build-essential \
-        ca-certificates \
-        gnupg2
+      ensure_dependencies git build-essential ca-certificates
       msg_ok "Installed Dependencies"
 
       NODE_VERSION="22" setup_nodejs

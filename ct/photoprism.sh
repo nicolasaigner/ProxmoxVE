@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 tteck
 # Author: tteck (tteckster)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://www.photoprism.app/
+# Source: https://www.photoprism.app/ | Github: https://github.com/photoprism/photoprism
 
 APP="PhotoPrism"
 var_tags="${var_tags:-media;photo}"
@@ -45,7 +45,7 @@ function update_script() {
     LIBHEIF_URL=$(curl -fsSL "https://dl.photoprism.app/dist/libheif/" | grep -oP "libheif-bookworm-amd64-v[0-9\.]+\.tar\.gz" | sort -V | tail -n 1)
     if [[ "${LIBHEIF_URL}" != "$(cat ~/.photoprism_libheif 2>/dev/null)" ]] || [[ ! -f ~/.photoprism_libheif ]]; then
       msg_info "Updating PhotoPrism LibHeif"
-      $STD apt install -y libvips42
+      ensure_dependencies libvips42
       curl -fsSL "https://dl.photoprism.app/dist/libheif/$LIBHEIF_URL" -o /tmp/libheif.tar.gz
       tar -xzf /tmp/libheif.tar.gz -C /usr/local
       ldconfig

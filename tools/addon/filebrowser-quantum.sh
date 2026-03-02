@@ -3,6 +3,7 @@
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: MickLesk
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
+# Source: https://github.com/filebrowserspace/quantum
 
 function header_info() {
   clear
@@ -32,6 +33,10 @@ DEFAULT_PORT=8080
 SRC_DIR="/"
 TMP_BIN="/tmp/filebrowser.$$"
 
+# Telemetry
+source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/api.func) 2>/dev/null || true
+declare -f init_tool_telemetry &>/dev/null && init_tool_telemetry "filebrowser-quantum" "addon"
+
 # Get primary IP
 IFACE=$(ip -4 route | awk '/default/ {print $5; exit}')
 IP=$(ip -4 addr show "$IFACE" | awk '/inet / {print $2}' | cut -d/ -f1 | head -n 1)
@@ -49,7 +54,7 @@ elif [[ -f "/etc/debian_version" ]]; then
   PKG_MANAGER="apt-get install -y"
 else
   echo -e "${CROSS} Unsupported OS detected. Exiting."
-  exit 1
+  exit 238
 fi
 
 header_info
@@ -110,6 +115,7 @@ if [[ -f "$INSTALL_PATH" ]]; then
   read -r update_prompt
   if [[ "${update_prompt,,}" =~ ^(y|yes)$ ]]; then
     msg_info "Updating ${APP}"
+    if ! command -v curl &>/dev/null; then $PKG_MANAGER curl &>/dev/null; fi
     curl -fsSL https://github.com/gtsteffaniak/filebrowser/releases/latest/download/linux-amd64-filebrowser -o "$TMP_BIN"
     chmod +x "$TMP_BIN"
     mv -f "$TMP_BIN" /usr/local/bin/filebrowser

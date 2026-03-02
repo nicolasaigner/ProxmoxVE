@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 tteck
 # Author: MickLesk (Canbiz) & vhsdream
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://karakeep.app/
+# Source: https://karakeep.app/ | Github: https://github.com/karakeep-app/karakeep
 
 APP="karakeep"
 var_tags="${var_tags:-bookmark}"
@@ -38,7 +38,7 @@ function update_script() {
     msg_ok "Updated yt-dlp"
 
     msg_info "Prepare update"
-    $STD apt install -y graphicsmagick ghostscript
+    ensure_dependencies graphicsmagick ghostscript
     if [[ -f /opt/karakeep/.env ]] && [[ ! -f /etc/karakeep/karakeep.env ]]; then
       mkdir -p /etc/karakeep
       mv /opt/karakeep/.env /etc/karakeep/karakeep.env
@@ -60,7 +60,8 @@ function update_script() {
       $STD corepack disable
     fi
     MODULE_VERSION="$(jq -r '.packageManager | split("@")[1]' /opt/karakeep/package.json)"
-    NODE_VERSION="22" NODE_MODULE="pnpm@${MODULE_VERSION}" setup_nodejs
+    NODE_VERSION="24" NODE_MODULE="pnpm@${MODULE_VERSION}" setup_nodejs
+    setup_meilisearch
 
     msg_info "Updating Karakeep"
     corepack enable
@@ -90,6 +91,7 @@ function update_script() {
     msg_ok "Started Services"
     msg_ok "Updated successfully!"
   fi
+
   exit
 }
 

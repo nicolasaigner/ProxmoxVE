@@ -5,9 +5,15 @@
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
 # Source: https://github.com/CyferShepard/Jellystat
 
+if ! command -v curl &>/dev/null; then
+  printf "\r\e[2K%b" '\033[93m Setup Source \033[m' >&2
+  apt-get update >/dev/null 2>&1
+  apt-get install -y curl >/dev/null 2>&1
+fi
 source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/core.func)
 source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/tools.func)
 source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/error_handler.func)
+source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/api.func) 2>/dev/null || true
 
 # Enable error handling
 set -Eeuo pipefail
@@ -24,6 +30,7 @@ DEFAULT_PORT=3000
 
 # Initialize all core functions (colors, formatting, icons, STD mode)
 load_functions
+init_tool_telemetry "" "addon"
 
 # ==============================================================================
 # HEADER
@@ -45,13 +52,13 @@ EOF
 # ==============================================================================
 if [[ -f "/etc/alpine-release" ]]; then
   msg_error "Alpine is not supported for ${APP}. Use Debian/Ubuntu."
-  exit 1
+  exit 238
 elif [[ -f "/etc/debian_version" ]]; then
   OS="Debian"
   SERVICE_PATH="/etc/systemd/system/jellystat.service"
 else
   echo -e "${CROSS} Unsupported OS detected. Exiting."
-  exit 1
+  exit 238
 fi
 
 # ==============================================================================
@@ -265,7 +272,7 @@ After=network.target postgresql.service
 [Service]
 Type=simple
 User=root
-WorkingDirectory=${INSTALL_PATH}
+WorkingDirectory=${INSTALL_PATH}/backend
 EnvironmentFile=${CONFIG_PATH}
 ExecStart=/usr/bin/node ${INSTALL_PATH}/backend/server.js
 Restart=always
@@ -319,7 +326,7 @@ if [[ "${type:-}" == "update" ]]; then
     update
   else
     msg_error "${APP} is not installed. Nothing to update."
-    exit 1
+    exit 233
   fi
   exit 0
 fi

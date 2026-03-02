@@ -9,7 +9,7 @@ APP="Ollama"
 var_tags="${var_tags:-ai}"
 var_cpu="${var_cpu:-4}"
 var_ram="${var_ram:-4096}"
-var_disk="${var_disk:-35}"
+var_disk="${var_disk:-40}"
 var_os="${var_os:-ubuntu}"
 var_version="${var_version:-24.04}"
 var_gpu="${var_gpu:-yes}"
@@ -32,11 +32,7 @@ function update_script() {
     if [[ ! -f /opt/Ollama_version.txt ]]; then
       touch /opt/Ollama_version.txt
     fi
-    if ! command -v zstd &>/dev/null; then
-      msg_info "Installing zstd"
-      $STD apt install -y zstd
-      msg_ok "Installed zstd"
-    fi
+    ensure_dependencies zstd
     msg_info "Stopping Services"
     systemctl stop ollama
     msg_ok "Services Stopped"

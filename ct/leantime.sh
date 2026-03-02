@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: Stroopwafe1
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://leantime.io
+# Source: https://leantime.io | Github: https://github.com/Leantime/leantime
 
 APP="Leantime"
 var_tags="${var_tags:-productivity}"
@@ -31,8 +31,8 @@ function update_script() {
   setup_mariadb
   if check_for_gh_release "leantime" "Leantime/leantime"; then
     msg_info "Creating Backup"
-    mariadb-dump leantime >"/opt/${APP}_db_backup_$(date +%F).sql"
-    tar -czf "/opt/${APP}_backup_$(date +%F).tar.gz" "/opt/${APP}"
+    mariadb-dump leantime >"/opt/leantime_db_backup_$(date +%F).sql"
+    tar -czf "/opt/leantime_backup_$(date +%F).tar.gz" "/opt/leantime"
     mv /opt/leantime /opt/leantime_bak
     msg_ok "Backup Created"
 

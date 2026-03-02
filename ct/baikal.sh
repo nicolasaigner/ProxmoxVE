@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: bvdberg01
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://sabre.io/baikal/
+# Source: https://sabre.io/baikal/ | Github: https://github.com/sabre-io/Baikal
 
 APP="Baikal"
 var_tags="${var_tags:-Dav}"
@@ -37,7 +37,7 @@ function update_script() {
     mv /opt/baikal /opt/baikal-backup
     msg_ok "Backed up data"
 
-    PHP_APACHE="YES" PHP_MODULE="pgsql,curl" PHP_VERSION="8.3" setup_php
+    PHP_APACHE="YES" PHP_VERSION="8.3" setup_php
     setup_composer
     fetch_and_deploy_gh_release "baikal" "sabre-io/Baikal" "tarball"
 

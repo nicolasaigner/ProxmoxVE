@@ -3,15 +3,15 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: kristocopani
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://semaphoreui.com/
+# Source: https://semaphoreui.com/ | Github: https://github.com/semaphoreui/semaphore
 
 APP="Semaphore"
 var_tags="${var_tags:-dev_ops}"
 var_cpu="${var_cpu:-2}"
 var_ram="${var_ram:-2048}"
 var_disk="${var_disk:-4}"
-var_os="${var_os:-debian}"
-var_version="${var_version:-13}"
+var_os="${var_os:-ubuntu}"
+var_version="${var_version:-24.04}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"

@@ -3,13 +3,13 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: Slaviša Arežina (tremor021)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://pangolin.net/
+# Source: https://pangolin.net/ | Github: https://github.com/fosrl/pangolin
 
 APP="Pangolin"
 var_tags="${var_tags:-proxy}"
 var_cpu="${var_cpu:-2}"
 var_ram="${var_ram:-4096}"
-var_disk="${var_disk:-5}"
+var_disk="${var_disk:-10}"
 var_os="${var_os:-debian}"
 var_version="${var_version:-13}"
 var_unprivileged="${var_unprivileged:-1}"
@@ -28,6 +28,10 @@ function update_script() {
     msg_error "No ${APP} Installation Found!"
     exit
   fi
+
+  ensure_dependencies build-essential python3
+
+  NODE_VERSION="24" setup_nodejs
 
   if check_for_gh_release "pangolin" "fosrl/pangolin"; then
     msg_info "Stopping Service"
@@ -48,17 +52,25 @@ function update_script() {
     $STD npm run set:sqlite
     $STD npm run set:oss
     rm -rf server/private
-    $STD npm run build:sqlite
+    $STD npm run db:generate
+    $STD npm run build
     $STD npm run build:cli
     cp -R .next/standalone ./
     chmod +x ./dist/cli.mjs
     cp server/db/names.json ./dist/names.json
+    cp server/db/ios_models.json ./dist/ios_models.json
+    cp server/db/mac_models.json ./dist/mac_models.json
     msg_ok "Updated Pangolin"
 
     msg_info "Restoring config"
     tar -xzf /opt/pangolin_config_backup.tar.gz -C /opt/pangolin --overwrite
     rm -f /opt/pangolin_config_backup.tar.gz
     msg_ok "Restored config"
+
+    msg_info "Running database migrations"
+    cd /opt/pangolin
+    ENVIRONMENT=prod $STD npx drizzle-kit push --config drizzle.sqlite.config.ts
+    msg_ok "Ran database migrations"
 
     msg_info "Updating Badger plugin version"
     BADGER_VERSION=$(get_latest_github_release "fosrl/badger" "false")

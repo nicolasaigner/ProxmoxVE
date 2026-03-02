@@ -19,7 +19,8 @@ $STD apt install -y \
   libssl-dev \
   libffi-dev \
   python3-dev \
-  ffmpeg
+  ffmpeg \
+  git
 msg_ok "Installed Dependencies"
 
 msg_info "Installing Bun"
@@ -59,7 +60,7 @@ msg_ok "Installed Python Dependencies"
 msg_info "Creating Service"
 cat <<EOF >/opt/yubal.env
 YUBAL_HOST=0.0.0.0
-YUBAL_PORT=8001
+YUBAL_PORT=8000
 YUBAL_DATA=/opt/yubal_data
 YUBAL_CONFIG=/opt/yubal_config
 YUBAL_ROOT=/opt/yubal
@@ -76,7 +77,7 @@ User=root
 WorkingDirectory=/opt/yubal
 EnvironmentFile=/opt/yubal.env
 Environment="PATH=/opt/yubal/.venv/bin:/usr/local/bin:/usr/bin:/bin"
-ExecStart=/opt/yubal/.venv/bin/python -m yubal
+ExecStart=/opt/yubal/.venv/bin/python -m yubal_api
 Restart=always
 RestartSec=5
 

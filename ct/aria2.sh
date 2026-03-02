@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 tteck
 # Author: tteck (tteckster)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://aria2.github.io/
+# Source: https://aria2.github.io/ | Github: https://github.com/aria2/aria2
 
 APP="Aria2"
 var_tags="${var_tags:-download-utility}"
@@ -11,7 +11,7 @@ var_cpu="${var_cpu:-2}"
 var_ram="${var_ram:-1024}"
 var_disk="${var_disk:-8}"
 var_os="${var_os:-debian}"
-var_version="${var_version:-12}"
+var_version="${var_version:-13}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -27,10 +27,10 @@ function update_script() {
     msg_error "No ${APP} Installation Found!"
     exit
   fi
-  msg_info "Updating $APP LXC"
-  $STD apt-get update
-  $STD apt-get -y upgrade
-  msg_ok "Updated $APP LXC"
+  msg_info "Updating Aria2"
+  $STD apt update
+  $STD apt -y upgrade
+  msg_ok "Updated Aria2"
   msg_ok "Updated successfully!"
   exit
 }

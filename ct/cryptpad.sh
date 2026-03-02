@@ -11,7 +11,7 @@ var_cpu="${var_cpu:-1}"
 var_ram="${var_ram:-1024}"
 var_disk="${var_disk:-8}"
 var_os="${var_os:-debian}"
-var_version="${var_version:-12}"
+var_version="${var_version:-13}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -37,18 +37,21 @@ function update_script() {
     [ -f /opt/cryptpad/config/config.js ] && mv /opt/cryptpad/config/config.js /opt/
     msg_ok "Backed up configuration"
 
-    fetch_and_deploy_gh_release "cryptpad" "cryptpad/cryptpad" "tarball"
+    CLEAN_INSTALL=1 fetch_and_deploy_gh_release "cryptpad" "cryptpad/cryptpad" "tarball"
+
+    msg_info "Restoring configuration"
+    mv /opt/config.js /opt/cryptpad/config/
+    msg_ok "Configuration restored"
 
     msg_info "Updating CryptaPad"
     cd /opt/cryptpad
     $STD npm ci
     $STD npm run install:components
+    if [ -f "/opt/cryptpad/install-onlyoffice.sh" ]; then
+      $STD bash /opt/cryptpad/install-onlyoffice.sh --accept-license
+    fi
     $STD npm run build
     msg_ok "Updated CryptaPad"
-
-    msg_info "Restoring configuration"
-    mv /opt/config.js /opt/cryptpad/config/
-    msg_ok "Configuration restored"
 
     msg_info "Starting Service"
     systemctl start cryptpad

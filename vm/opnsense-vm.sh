@@ -44,11 +44,14 @@ CROSS="${RD}✗${CL}"
 set -Eeo pipefail
 trap 'error_handler $LINENO "$BASH_COMMAND"' ERR
 trap cleanup EXIT
+trap 'post_update_to_api "failed" "130"' SIGINT
+trap 'post_update_to_api "failed" "143"' SIGTERM
+trap 'post_update_to_api "failed" "129"; exit 129' SIGHUP
 function error_handler() {
   local exit_code="$?"
   local line_number="$1"
   local command="$2"
-  post_update_to_api "failed" "$command"
+  post_update_to_api "failed" "$exit_code"
   local error_message="${RD}[ERROR]${CL} in line ${RD}$line_number${CL}: exit code ${RD}$exit_code${CL}: while executing command ${YW}$command${CL}"
   echo -e "\n$error_message\n"
   cleanup_vmid
@@ -79,9 +82,27 @@ function cleanup_vmid() {
 }
 
 function cleanup() {
+  local exit_code=$?
   popd >/dev/null
-  post_update_to_api "done" "none"
+  if [[ "${POST_TO_API_DONE:-}" == "true" && "${POST_UPDATE_DONE:-}" != "true" ]]; then
+    if [[ $exit_code -eq 0 ]]; then
+      post_update_to_api "done" "none"
+    else
+      post_update_to_api "failed" "$exit_code"
+    fi
+  fi
   rm -rf $TEMP_DIR
+}
+
+function check_disk_space() {
+  local path="$1"
+  local required_gb="$2"
+  local available_kb=$(df -k "$path" | awk 'NR==2 {print $4}')
+  local available_gb=$((available_kb / 1024 / 1024))
+  if [ $available_gb -lt $required_gb ]; then
+    return 1
+  fi
+  return 0
 }
 
 TEMP_DIR=$(mktemp -d)
@@ -189,7 +210,7 @@ pve_check() {
     if ((MINOR < 0 || MINOR > 9)); then
       msg_error "This version of Proxmox VE is not supported."
       msg_error "Supported: Proxmox VE version 8.0 – 8.9"
-      exit 1
+      exit 105
     fi
     return 0
   fi
@@ -200,7 +221,7 @@ pve_check() {
     if ((MINOR < 0 || MINOR > 1)); then
       msg_error "This version of Proxmox VE is not supported."
       msg_error "Supported: Proxmox VE version 9.0 – 9.1"
-      exit 1
+      exit 105
     fi
     return 0
   fi
@@ -208,7 +229,7 @@ pve_check() {
   # All other unsupported versions
   msg_error "This version of Proxmox VE is not supported."
   msg_error "Supported versions: Proxmox VE 8.0 – 8.x or 9.0 – 9.1"
-  exit 1
+  exit 105
 }
 
 function arch_check() {
@@ -267,8 +288,8 @@ function default_settings() {
   echo -e "${DGN}Using Hostname: ${BGN}${HN}${CL}"
   echo -e "${DGN}Allocated Cores: ${BGN}${CORE_COUNT}${CL}"
   echo -e "${DGN}Allocated RAM: ${BGN}${RAM_SIZE}${CL}"
-  if ! grep -q "^iface ${BRG}" /etc/network/interfaces; then
-    msg_error "Bridge '${BRG}' does not exist in /etc/network/interfaces"
+  if ! ip link show "${BRG}" &>/dev/null; then
+    msg_error "Bridge '${BRG}' does not exist"
     exit
   else
     echo -e "${DGN}Using LAN Bridge: ${BGN}${BRG}${CL}"
@@ -284,8 +305,8 @@ function default_settings() {
     if [ "$NETWORK_MODE" = "dual" ]; then
       echo -e "${DGN}Network Mode: ${BGN}Dual Interface (Firewall)${CL}"
       echo -e "${DGN}Using WAN MAC Address: ${BGN}${WAN_MAC}${CL}"
-      if ! grep -q "^iface ${WAN_BRG}" /etc/network/interfaces; then
-        msg_error "Bridge '${WAN_BRG}' does not exist in /etc/network/interfaces"
+      if ! ip link show "${WAN_BRG}" &>/dev/null; then
+        msg_error "Bridge '${WAN_BRG}' does not exist"
         exit
       else
         echo -e "${DGN}Using WAN Bridge: ${BGN}${WAN_BRG}${CL}"
@@ -403,8 +424,8 @@ function advanced_settings() {
     if [ -z $BRG ]; then
       BRG="vmbr0"
     fi
-    if ! grep -q "^iface ${BRG}" /etc/network/interfaces; then
-      msg_error "Bridge '${BRG}' does not exist in /etc/network/interfaces"
+    if ! ip link show "${BRG}" &>/dev/null; then
+      msg_error "Bridge '${BRG}' does not exist"
       exit
     fi
     echo -e "${DGN}Using LAN Bridge: ${BGN}$BRG${CL}"
@@ -453,8 +474,8 @@ function advanced_settings() {
     if [ -z $WAN_BRG ]; then
       WAN_BRG="vmbr1"
     fi
-    if ! grep -q "^iface ${WAN_BRG}" /etc/network/interfaces; then
-      msg_error "WAN Bridge '${WAN_BRG}' does not exist in /etc/network/interfaces"
+    if ! ip link show "${WAN_BRG}" &>/dev/null; then
+      msg_error "WAN Bridge '${WAN_BRG}' does not exist"
       exit
     fi
     echo -e "${DGN}Using WAN Bridge: ${BGN}$WAN_BRG${CL}"
@@ -595,14 +616,44 @@ for ver in $RELEASE_LIST; do
 done
 if [ -z "$URL" ]; then
   msg_error "Could not find generic FreeBSD amd64 qcow2 image (non-UFS/ZFS)."
-  exit 1
+  exit 115
 fi
 msg_ok "Download URL: ${CL}${BL}${URL}${CL}"
+
+# Check available disk space (require at least 20GB for safety)
+if ! check_disk_space "$TEMP_DIR" 20; then
+  AVAILABLE_GB=$(df -h "$TEMP_DIR" | awk 'NR==2 {print $4}')
+  msg_error "Insufficient disk space in temporary directory ($TEMP_DIR)."
+  msg_error "Available: ${AVAILABLE_GB}, Required: ~20GB for FreeBSD image decompression."
+  msg_error "Please free up space or ensure /tmp has sufficient storage."
+  exit 214
+fi
+
+msg_info "Downloading FreeBSD Image"
 curl -f#SL -o "$(basename "$URL")" "$URL"
 echo -en "\e[1A\e[0K"
+msg_ok "Downloaded ${CL}${BL}$(basename "$URL")${CL}"
+
+# Check disk space again before decompression
+if ! check_disk_space "$TEMP_DIR" 15; then
+  AVAILABLE_GB=$(df -h "$TEMP_DIR" | awk 'NR==2 {print $4}')
+  msg_error "Insufficient disk space for decompression."
+  msg_error "Available: ${AVAILABLE_GB}, Required: ~15GB for decompressed image."
+  exit 214
+fi
+
+msg_info "Decompressing FreeBSD Image (this may take a few minutes)"
 FILE=FreeBSD.qcow2
-unxz -cv $(basename $URL) >${FILE}
-msg_ok "Downloaded ${CL}${BL}${FILE}${CL}"
+if ! unxz -cv $(basename $URL) >${FILE}; then
+  msg_error "Failed to decompress FreeBSD image."
+  msg_error "This is usually caused by insufficient disk space."
+  df -h "$TEMP_DIR"
+  exit 115
+fi
+
+# Remove the compressed file to save space
+rm -f "$(basename "$URL")"
+msg_ok "Decompressed ${CL}${BL}${FILE}${CL}"
 
 STORAGE_TYPE=$(pvesm status -storage $STORAGE | awk 'NR>1 {print $2}')
 case $STORAGE_TYPE in
@@ -618,6 +669,11 @@ btrfs)
   DISK_IMPORT="-format raw"
   FORMAT=",efitype=4m"
   THIN=""
+  ;;
+*)
+  DISK_EXT=""
+  DISK_REF=""
+  DISK_IMPORT="-format raw"
   ;;
 esac
 for i in {0,1}; do
@@ -637,7 +693,7 @@ qm set $VMID \
   -boot order=scsi0 \
   -serial0 socket \
   -tags community-script >/dev/null
-qm resize $VMID scsi0 10G >/dev/null
+qm resize $VMID scsi0 20G >/dev/null
 DESCRIPTION=$(
   cat <<EOF
 <div align='center'>

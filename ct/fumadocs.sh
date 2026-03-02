@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: MickLesk (CanbiZ)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://github.com/fuma-nama/fumadoc
+# Source: https://fumadocs.vercel.app/ | Github: https://github.com/fuma-nama/fumadocs
 
 APP="Fumadocs"
 var_tags="${var_tags:-documentation}"
@@ -11,7 +11,7 @@ var_cpu="${var_cpu:-2}"
 var_ram="${var_ram:-2048}"
 var_disk="${var_disk:-5}"
 var_os="${var_os:-debian}"
-var_version="${var_version:-12}"
+var_version="${var_version:-13}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -43,9 +43,7 @@ function update_script() {
     msg_error "Project directory does not exist: $PROJECT_DIR"
     exit
   fi
-  if ! command -v git &>/dev/null; then
-    $STD apt-get install -y git
-  fi
+  ensure_dependencies git
 
   msg_info "Stopping service $SERVICE_NAME"
   systemctl stop "$SERVICE_NAME"

@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 tteck
 # Author: tteck (tteckster)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://www.nocodb.com/
+# Source: https://www.nocodb.com/ | Github: https://github.com/nocodb/nocodb
 
 APP="NocoDB"
 var_tags="${var_tags:-noCode}"
@@ -27,12 +27,12 @@ function update_script() {
     msg_error "No ${APP} Installation Found!"
     exit
   fi
-  if check_for_gh_release "nocodb" "nocodb/nocodb"; then
+  if check_for_gh_release "nocodb" "nocodb/nocodb" "0.301.1"; then
     msg_info "Stopping Service"
     systemctl stop nocodb
     msg_ok "Stopped Service"
 
-    fetch_and_deploy_gh_release "nocodb" "nocodb/nocodb" "singlefile" "latest" "/opt/nocodb/" "Noco-linux-x64"
+    fetch_and_deploy_gh_release "nocodb" "nocodb/nocodb" "singlefile" "0.301.1" "/opt/nocodb/" "Noco-linux-x64"
 
     msg_info "Starting Service"
     systemctl start nocodb

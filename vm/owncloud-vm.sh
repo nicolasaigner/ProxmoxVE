@@ -64,14 +64,15 @@ THIN="discard=on,ssd=1,"
 set -e
 trap 'error_handler $LINENO "$BASH_COMMAND"' ERR
 trap cleanup EXIT
-trap 'post_update_to_api "failed" "INTERRUPTED"' SIGINT
-trap 'post_update_to_api "failed" "TERMINATED"' SIGTERM
+trap 'post_update_to_api "failed" "130"' SIGINT
+trap 'post_update_to_api "failed" "143"' SIGTERM
+trap 'post_update_to_api "failed" "129"; exit 129' SIGHUP
 function error_handler() {
   local exit_code="$?"
   local line_number="$1"
   local command="$2"
   local error_message="${RD}[ERROR]${CL} in line ${RD}$line_number${CL}: exit code ${RD}$exit_code${CL}: while executing command ${YW}$command${CL}"
-  post_update_to_api "failed" "${command}"
+  post_update_to_api "failed" "${exit_code}"
   echo -e "\n$error_message\n"
   cleanup_vmid
 }
@@ -101,8 +102,15 @@ function cleanup_vmid() {
 }
 
 function cleanup() {
+  local exit_code=$?
   popd >/dev/null
-  post_update_to_api "done" "none"
+  if [[ "${POST_TO_API_DONE:-}" == "true" && "${POST_UPDATE_DONE:-}" != "true" ]]; then
+    if [[ $exit_code -eq 0 ]]; then
+      post_update_to_api "done" "none"
+    else
+      post_update_to_api "failed" "$exit_code"
+    fi
+  fi
   rm -rf $TEMP_DIR
 }
 
@@ -151,7 +159,7 @@ pve_check() {
     if ((MINOR < 0 || MINOR > 9)); then
       msg_error "This version of Proxmox VE is not supported."
       msg_error "Supported: Proxmox VE version 8.0 – 8.9"
-      exit 1
+      exit 105
     fi
     return 0
   fi
@@ -162,7 +170,7 @@ pve_check() {
     if ((MINOR < 0 || MINOR > 1)); then
       msg_error "This version of Proxmox VE is not supported."
       msg_error "Supported: Proxmox VE version 9.0 – 9.1"
-      exit 1
+      exit 105
     fi
     return 0
   fi
@@ -170,7 +178,7 @@ pve_check() {
   # All other unsupported versions
   msg_error "This version of Proxmox VE is not supported."
   msg_error "Supported versions: Proxmox VE 8.0 – 8.x or 9.0 – 9.1"
-  exit 1
+  exit 105
 }
 
 function arch_check() {
@@ -499,6 +507,11 @@ btrfs)
   DISK_IMPORT="-format raw"
   FORMAT=",efitype=4m"
   THIN=""
+  ;;
+*)
+  DISK_EXT=""
+  DISK_REF=""
+  DISK_IMPORT="-format raw"
   ;;
 esac
 for i in {0,1,2}; do

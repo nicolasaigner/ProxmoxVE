@@ -6,7 +6,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Source: https://github.com/opf/openproject
 
 APP="OpenProject"
-var_tags="${var_tags:-project-management,erp}"
+var_tags="${var_tags:-project-management;erp}"
 var_cpu="${var_cpu:-2}"
 var_ram="${var_ram:-4096}"
 var_disk="${var_disk:-8}"
@@ -27,10 +27,11 @@ function update_script() {
     msg_error "No ${APP} Installation Found!"
     exit
   fi
-  msg_info "Updating ${APP}"
+
+  msg_info "Updating OpenProject"
   $STD apt update
   $STD apt install --only-upgrade -y openproject
-  msg_ok "Updated ${APP}"
+  msg_ok "Updated OpenProject"
   msg_ok "Updated successfully!"
   exit
 }

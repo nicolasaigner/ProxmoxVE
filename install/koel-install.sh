@@ -3,7 +3,7 @@
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: MickLesk (CanbiZ)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://koel.dev/
+# Source: https://koel.dev/ | Github: https://github.com/koel/koel
 
 source /dev/stdin <<<"$FUNCTIONS_FILE_PATH"
 color
@@ -23,7 +23,7 @@ msg_ok "Installed Dependencies"
 
 PG_VERSION="16" setup_postgresql
 PG_DB_NAME="koel" PG_DB_USER="koel" setup_postgresql_db
-PHP_VERSION="8.4" PHP_FPM="YES" PHP_MODULE="bz2,exif,imagick,pgsql,sqlite3" setup_php
+PHP_VERSION="8.4" PHP_FPM="YES" setup_php
 NODE_VERSION="22" NODE_MODULE="pnpm" setup_nodejs
 setup_composer
 

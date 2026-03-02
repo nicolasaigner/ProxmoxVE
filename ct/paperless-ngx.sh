@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 tteck
 # Author: tteck (tteckster)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://docs.paperless-ngx.com/
+# Source: https://docs.paperless-ngx.com/ | Github: https://github.com/paperless-ngx/paperless-ngx
 
 APP="Paperless-ngx"
 var_tags="${var_tags:-document;management}"
@@ -44,7 +44,7 @@ function update_script() {
       echo -e "${TAB}${GATEWAY}${BGN}https://github.com/community-scripts/ProxmoxVE/discussions/9223${CL}"
       echo -e ""
       msg_custom "⚠️" "Update aborted. Please migrate your data first."
-      exit 1
+      exit 253
     fi
   fi
 
@@ -69,7 +69,7 @@ function update_script() {
       if [ "$VERSION_CODENAME" = "bookworm" ]; then
         setup_gs
       else
-        $STD apt install -y ghostscript
+        ensure_dependencies ghostscript
       fi
 
       msg_info "Updating Paperless-ngx"
@@ -145,7 +145,7 @@ function update_script() {
         setup_gs
       else
         msg_info "Installing Ghostscript"
-        $STD apt install -y ghostscript
+        ensure_dependencies ghostscript
         msg_ok "Installed Ghostscript"
       fi
 

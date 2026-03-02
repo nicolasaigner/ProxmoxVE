@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: MickLesk (CanbiZ)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://nodered.org
+# Source: https://nodered.org/
 
 APP="Alpine-Node-RED"
 var_tags="${var_tags:-alpine;automation}"
@@ -11,7 +11,7 @@ var_cpu="${var_cpu:-1}"
 var_ram="${var_ram:-256}"
 var_disk="${var_disk:-1}"
 var_os="${var_os:-alpine}"
-var_version="${var_version:-3.22}"
+var_version="${var_version:-3.23}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"

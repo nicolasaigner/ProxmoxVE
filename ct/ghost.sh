@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: fabrice1236
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://ghost.org/
+# Source: https://ghost.org/ | Github: https://github.com/TryGhost/Ghost
 
 APP="Ghost"
 var_tags="${var_tags:-cms;blog}"
@@ -11,7 +11,7 @@ var_cpu="${var_cpu:-2}"
 var_ram="${var_ram:-1024}"
 var_disk="${var_disk:-5}"
 var_os="${var_os:-debian}"
-var_version="${var_version:-12}"
+var_version="${var_version:-13}"
 var_unprivileged="${var_unprivileged:-1}"
 
 header_info "$APP"
@@ -23,9 +23,10 @@ function update_script() {
   header_info
   check_container_storage
   check_container_resources
-  setup_mariadb
 
+  setup_mariadb
   NODE_VERSION="22" setup_nodejs
+  ensure_dependencies git
 
   msg_info "Updating Ghost"
   if command -v ghost &>/dev/null; then

@@ -6,7 +6,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Source: https://github.com/CrazyWolf13/streamlink-webui
 
 APP="streamlink-webui"
-var_tags="${var_tags:-download,streaming}"
+var_tags="${var_tags:-download;streaming}"
 var_cpu="${var_cpu:-2}"
 var_ram="${var_ram:-2048}"
 var_disk="${var_disk:-10}"
@@ -39,7 +39,7 @@ function update_script() {
     CLEAN_INSTALL=1 fetch_and_deploy_gh_release "streamlink-webui" "CrazyWolf13/streamlink-webui" "tarball"
 
     msg_info "Updating streamlink-webui"
-    $STD uv venv /opt/streamlink-webui/backend/src/.venv
+    $STD uv venv --clear /opt/streamlink-webui/backend/src/.venv
     source /opt/streamlink-webui/backend/src/.venv/bin/activate
     $STD uv pip install -r /opt/streamlink-webui/backend/src/requirements.txt --python=/opt/streamlink-webui/backend/src/.venv
     cd /opt/streamlink-webui/frontend/src

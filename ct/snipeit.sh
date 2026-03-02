@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: Michel Roegl-Brunner (michelroegl-brunner)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://snipeitapp.com/
+# Source: https://snipeitapp.com/ | Github: https://github.com/grokability/snipe-it
 
 APP="SnipeIT"
 var_tags="${var_tags:-asset-management;foss}"
@@ -42,7 +42,7 @@ function update_script() {
     msg_ok "Created Backup"
 
     fetch_and_deploy_gh_release "snipe-it" "grokability/snipe-it" "tarball"
-    [[ "$(php -v 2>/dev/null)" == PHP\ 8.2* ]] && PHP_VERSION="8.3" PHP_MODULE="common,ctype,ldap,fileinfo,iconv,mysql,soap,xsl" PHP_FPM="YES" setup_php
+    [[ "$(php -v 2>/dev/null)" == PHP\ 8.2* ]] && PHP_VERSION="8.3" PHP_FPM="YES" PHP_MODULE="ldap,soap,xsl" setup_php
     sed -i 's/php8.2/php8.3/g' /etc/nginx/conf.d/snipeit.conf
     setup_composer
 
@@ -50,8 +50,8 @@ function update_script() {
     $STD apt update
     $STD apt -y upgrade
     cp /opt/snipe-it-backup/.env /opt/snipe-it/.env
-    cp -r /opt/snipe-it-backup/public/uploads/ /opt/snipe-it/public/uploads/
-    cp -r /opt/snipe-it-backup/storage/private_uploads /opt/snipe-it/storage/private_uploads
+    cp -r /opt/snipe-it-backup/public/uploads/. /opt/snipe-it/public/uploads/
+    cp -r /opt/snipe-it-backup/storage/private_uploads/. /opt/snipe-it/storage/private_uploads/
     cd /opt/snipe-it/
     export COMPOSER_ALLOW_SUPERUSER=1
     $STD composer install --no-dev --optimize-autoloader --no-interaction

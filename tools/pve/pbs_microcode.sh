@@ -28,6 +28,10 @@ CM="${GN}✓${CL}"
 CROSS="${RD}✗${CL}"
 
 msg_info() { echo -ne " ${HOLD} ${YW}$1..."; }
+
+# Telemetry
+source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxVE/main/misc/api.func) 2>/dev/null || true
+declare -f init_tool_telemetry &>/dev/null && init_tool_telemetry "pbs-microcode" "pve"
 msg_ok() { echo -e "${BFR} ${CM} ${GN}$1${CL}"; }
 msg_error() { echo -e "${BFR} ${CROSS} ${RD}$1${CL}"; }
 
@@ -37,7 +41,7 @@ header_info
 virt=$(systemd-detect-virt)
 if [ "$virt" != "none" ]; then
   msg_error "This script must be run on bare metal. Detected virtual environment: $virt"
-  exit 1
+  exit 232
 fi
 
 # Attempt to obtain the current loaded microcode revision

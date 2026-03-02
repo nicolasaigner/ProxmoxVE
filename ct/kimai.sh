@@ -3,7 +3,7 @@ source <(curl -fsSL https://raw.githubusercontent.com/community-scripts/ProxmoxV
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: MickLesk (Canbiz)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://www.kimai.org/
+# Source: https://www.kimai.org/ | Github: https://github.com/kimai/kimai
 
 APP="Kimai"
 var_tags="${var_tags:-time-tracking}"
@@ -23,16 +23,14 @@ function update_script() {
   header_info
   check_container_storage
   check_container_resources
-  if ! command -v lsb_release; then
-    apt install -y lsb-release
-  fi
+  ensure_dependencies lsb-release
   if [[ ! -d /opt/kimai ]]; then
     msg_error "No ${APP} Installation Found!"
     exit
   fi
   setup_mariadb
 
-  PHP_VERSION="8.4" PHP_MODULE="mysql" PHP_APACHE="YES" setup_php
+  PHP_VERSION="8.4" PHP_APACHE="YES" setup_php
   setup_composer
 
   if check_for_gh_release "kimai" "kimai/kimai"; then

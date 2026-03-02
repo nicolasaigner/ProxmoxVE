@@ -3,7 +3,7 @@
 # Copyright (c) 2021-2026 community-scripts ORG
 # Author: Slaviša Arežina (tremor021)
 # License: MIT | https://github.com/community-scripts/ProxmoxVE/raw/main/LICENSE
-# Source: https://pangolin.net/
+# Source: https://pangolin.net/ | Github: https://github.com/fosrl/pangolin
 
 source /dev/stdin <<<"$FUNCTIONS_FILE_PATH"
 color
@@ -15,11 +15,13 @@ update_os
 
 msg_info "Installing Dependencies"
 $STD apt install -y \
+  build-essential \
+  python3 \
   sqlite3 \
   iptables
 msg_ok "Installed Dependencies"
 
-NODE_VERSION="22" setup_nodejs
+NODE_VERSION="24" setup_nodejs
 fetch_and_deploy_gh_release "pangolin" "fosrl/pangolin" "tarball"
 fetch_and_deploy_gh_release "gerbil" "fosrl/gerbil" "singlefile" "latest" "/usr/bin" "gerbil_linux_amd64"
 fetch_and_deploy_gh_release "traefik" "traefik/traefik" "prebuild" "latest" "/usr/bin" "traefik_v*_linux_amd64.tar.gz"
@@ -36,7 +38,8 @@ $STD npm ci
 $STD npm run set:sqlite
 $STD npm run set:oss
 rm -rf server/private
-$STD npm run build:sqlite
+$STD npm run db:generate
+$STD npm run build
 $STD npm run build:cli
 cp -R .next/standalone ./
 
@@ -47,6 +50,8 @@ cd /opt/pangolin
 EOF
 chmod +x /usr/local/bin/pangctl ./dist/cli.mjs
 cp server/db/names.json ./dist/names.json
+cp server/db/ios_models.json ./dist/ios_models.json
+cp server/db/mac_models.json ./dist/mac_models.json
 mkdir -p /var/config
 
 cat <<EOF >/opt/pangolin/config/config.yml
@@ -175,8 +180,7 @@ http:
         servers:
           - url: "http://$LOCAL_IP:3000"
 EOF
-$STD npm run db:sqlite:generate
-$STD npm run db:sqlite:push
+$STD npm run db:push
 
 . /etc/os-release
 if [ "$VERSION_CODENAME" = "trixie" ]; then
