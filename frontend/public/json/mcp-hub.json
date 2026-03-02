@@ -1,0 +1,33 @@
+{
+  "name": "MCP Hub",
+  "slug": "mcp-hub",
+  "categories": [20],
+  "date_created": "2026-02-27",
+  "type": "ct",
+  "updateable": true,
+  "privileged": false,
+  "interface_port": 37373,
+  "documentation": "https://github.com/ravitemer/mcp-hub/blob/main/README.md",
+  "config_path": "/opt/mcp-hub/global.json",
+  "website": "https://github.com/ravitemer/mcp-hub",
+  "logo": null,
+  "description": "LXC para configurações de um HUB MCP Server no Proxmox.",
+  "install_methods": [
+    {
+      "type": "default",
+      "script": "ct/mcp-hub.sh",
+      "resources": {
+        "cpu": 2,
+        "ram": 2048,
+        "hdd": 32,
+        "os": "Debian",
+        "version": "13"
+      }
+    }
+  ],
+  "default_credentials": {
+    "username": null,
+    "password": null
+  },
+  "notes": []
+}
