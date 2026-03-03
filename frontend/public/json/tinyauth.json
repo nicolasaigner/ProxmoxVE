@@ -1,10 +1,10 @@
 {
-  "name": "Alpine-Tinyauth",
-  "slug": "alpine-tinyauth",
+  "name": "Tinyauth",
+  "slug": "tinyauth",
   "categories": [
     6
   ],
-  "date_created": "2025-05-06",
+  "date_created": "2026-03-03",
   "type": "ct",
   "updateable": true,
   "privileged": false,
@@ -17,13 +17,13 @@
   "install_methods": [
     {
       "type": "default",
-      "script": "ct/alpine-tinyauth.sh",
+      "script": "ct/tinyauth.sh",
       "resources": {
         "cpu": 1,
-        "ram": 256,
-        "hdd": 2,
-        "os": "alpine",
-        "version": "3.23"
+        "ram": 512,
+        "hdd": 4,
+        "os": "debian",
+        "version": "13"
       }
     },
     {
